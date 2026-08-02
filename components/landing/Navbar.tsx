@@ -32,12 +32,12 @@ const Navbar = () => {
             ))}
           </ul>
           <div className="login-signup flex gap-4">
-            <button className="login-btn text-blue-600 font-bold px-4 py-2 hover:text-blue-500 transition-colors duration-200">
+            <a href="/login" className="login-btn text-blue-600 font-bold px-4 py-2 hover:text-blue-500 transition-colors duration-200">
               Login
-            </button>
-            <button className="signup-btn bg-blue-500 text-white px-6 py-2 rounded-xl hover:bg-blue-600 transition-colors duration-200">
+            </a>
+            <a href="/signup" className="signup-btn bg-blue-500 text-white px-6 py-2 rounded-xl hover:bg-blue-600 transition-colors duration-200">
               Get Started
-            </button>
+            </a>
           </div>
         </nav>
       </div>
