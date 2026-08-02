@@ -18,7 +18,7 @@ const Navbar = () => {
     <>
       <div className="w-full bg-white text-black hidden md:block">
         <nav className="flex items-center justify-between w-full px-6 py-4">
-          <h1 className="logo text-xl font-bold">ResumeAI</h1>
+          <h1 className="logo text-xl font-bold cursor-pointer">ResumeAI</h1>
           <ul className="nav-links flex gap-8 text-gray-700">
             {navItems.map((item, index) => (
               <li key={index}>
