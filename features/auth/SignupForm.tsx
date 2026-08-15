@@ -81,12 +81,16 @@ const SignupForm = () => {
       </p>
 
       {/* Full Name */}
-      <div className="mt-8">
-        <label className="mb-2 block text-sm font-medium text-slate-700">
+      <div className="group mt-8">
+        <label
+          htmlFor="signup-name"
+          className="mb-2 block cursor-text text-sm font-medium text-slate-700 transition-colors group-focus-within:text-blue-600"
+        >
           Full Name
         </label>
 
         <input
+          id="signup-name"
           type="text"
           placeholder="John Doe"
           value={name}
@@ -96,12 +100,16 @@ const SignupForm = () => {
       </div>
 
       {/* Email */}
-      <div className="mt-5">
-        <label className="mb-2 block text-sm font-medium text-slate-700">
+      <div className="group mt-5">
+        <label
+          htmlFor="signup-email"
+          className="mb-2 block cursor-text text-sm font-medium text-slate-700 transition-colors group-focus-within:text-blue-600"
+        >
           Email
         </label>
 
         <input
+          id="signup-email"
           type="email"
           placeholder="name@example.com"
           value={email}
@@ -111,12 +119,16 @@ const SignupForm = () => {
       </div>
 
       {/* Password */}
-      <div className="mt-5">
-        <label className="mb-2 block text-sm font-medium text-slate-700">
+      <div className="group mt-5">
+        <label
+          htmlFor="signup-password"
+          className="mb-2 block cursor-text text-sm font-medium text-slate-700 transition-colors group-focus-within:text-blue-600"
+        >
           Password
         </label>
 
         <input
+          id="signup-password"
           type="password"
           placeholder="••••••••"
           value={password}
@@ -126,12 +138,16 @@ const SignupForm = () => {
       </div>
 
       {/* Confirm Password */}
-      <div className="mt-5">
-        <label className="mb-2 block text-sm font-medium text-slate-700">
+      <div className="group mt-5">
+        <label
+          htmlFor="signup-confirm-password"
+          className="mb-2 block cursor-text text-sm font-medium text-slate-700 transition-colors group-focus-within:text-blue-600"
+        >
           Confirm Password
         </label>
 
         <input
+          id="signup-confirm-password"
           type="password"
           placeholder="••••••••"
           value={confirmPassword}

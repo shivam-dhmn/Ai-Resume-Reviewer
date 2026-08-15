@@ -74,12 +74,16 @@ const LoginForm = () => {
 
       {/* Email */}
 
-      <div className="mb-5">
-        <label className="mb-2 block text-sm font-medium text-slate-700">
+      <div className="group mb-5">
+        <label
+          htmlFor="login-email"
+          className="mb-2 block cursor-text text-sm font-medium text-slate-700 transition-colors group-focus-within:text-blue-600"
+        >
           Email
         </label>
 
         <input
+          id="login-email"
           type="email"
           placeholder="name@example.com"
           value={email}
@@ -90,9 +94,14 @@ const LoginForm = () => {
 
       {/* Password */}
 
-      <div>
+      <div className="group">
         <div className="mb-2 flex items-center justify-between">
-          <label className="text-sm font-medium text-slate-700">Password</label>
+          <label
+            htmlFor="login-password"
+            className="cursor-text text-sm font-medium text-slate-700 transition-colors group-focus-within:text-blue-600"
+          >
+            Password
+          </label>
 
           <Link href="#" className="text-xs text-blue-600 hover:underline">
             Forgot password?
@@ -100,6 +109,7 @@ const LoginForm = () => {
         </div>
 
         <input
+          id="login-password"
           type="password"
           placeholder="••••••••"
           value={password}
