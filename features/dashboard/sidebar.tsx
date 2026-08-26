@@ -24,17 +24,17 @@ const sidebarItems = [
   },
   {
     label: "Analysis History",
-    href: "/dashboard/history",
+    href: "/history",
     icon: History,
   },
   {
     label: "Career Insights",
-    href: "/dashboard/insights",
+    href: "/insights",
     icon: Sparkles,
   },
   {
     label: "Settings",
-    href: "/dashboard/settings",
+    href: "/settings",
     icon: Settings,
   },
 ];
