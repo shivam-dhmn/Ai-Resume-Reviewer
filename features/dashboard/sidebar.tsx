@@ -19,7 +19,7 @@ const sidebarItems = [
   },
   {
     label: "Upload Resume",
-    href: "/dashboard/upload",
+    href: "/upload",
     icon: Upload,
   },
   {
@@ -42,10 +42,10 @@ const sidebarItems = [
 const Sidebar = () => {
   const pathname = usePathname();
   return (
-    <aside className="w-64 h-screen bg-white text-black p-4">
-      <h1 className="text-3xl font-bold p-3 text-blue-700">Resume AI</h1>
+    <aside className="w-64  bg-white text-black p-4 justify-between flex flex-col border-r-2 border-gray-200">
 
      <nav className="space-y-2">
+      <h1 className="text-3xl font-bold p-3 text-blue-700">Resume AI</h1>
         {sidebarItems.map((item) => {
           const Icon = item.icon;
 
@@ -70,6 +70,10 @@ const Sidebar = () => {
           );
         })}
       </nav>
+
+      <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
+        Log Out 
+      </button>
     </aside>
   );
 };
