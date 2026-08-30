@@ -1,6 +1,8 @@
+import ResumeUploadCard from "../upload/ResumeUploadCard";
+
 const Dashboard = () => {
   return (
-    <section className="min-h-screen p-6 bg-gray-100 text-black lg:p-8 ">
+    <section className="min-h-screen bg-gray-100 p-6 text-black lg:p-8">
       {/* Top section */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">
@@ -15,21 +17,9 @@ const Dashboard = () => {
       {/* Main grid */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Left / Main area */}
-        <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6 lg:col-span-2">
           {/* Upload Resume */}
-          <div className="rounded-2xl border border-slate-200 bg-white p-8">
-            <h2 className="text-xl font-semibold text-slate-900">
-              Upload your latest Resume
-            </h2>
-
-            <p className="mt-2 text-sm text-slate-500">
-              Drag and drop your PDF or DOCX file here, or click to browse.
-            </p>
-
-            <button className="mt-5 rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700">
-              Select File
-            </button>
-          </div>
+          <ResumeUploadCard />
 
           {/* Recent Analyses */}
           <div className="rounded-2xl border border-slate-200 bg-white p-6">

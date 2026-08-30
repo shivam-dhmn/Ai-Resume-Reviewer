@@ -44,7 +44,7 @@ const MissingKeywords = () => {
         <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
 
         <p className="text-xs leading-5 text-slate-500">
-          Add only keywords that genuinely match your experience. Don't stuff
+          Add only keywords that genuinely match your experience. Don&apos;t stuff
           your resume with terms just to satisfy an ATS.
         </p>
       </div>

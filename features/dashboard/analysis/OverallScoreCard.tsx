@@ -12,7 +12,7 @@ const OverallScoreCard = () => {
           </p>
 
           <p className="mt-1 text-xs text-slate-400">
-            Your resume's overall performance
+            Your resume&apos;s overall performance
           </p>
         </div>
 

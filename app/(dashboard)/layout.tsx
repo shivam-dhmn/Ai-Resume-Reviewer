@@ -1,10 +1,22 @@
-import Sidebar from "@/features/dashboard/sidebar";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
-export default function DashboardLayout({
+import Sidebar from "@/features/dashboard/shared/Sidebar";
+
+export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50">
       {/* This stays on every dashboard page */}

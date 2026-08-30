@@ -23,7 +23,7 @@ const ResumeUploadCard = () => {
       </div>
 
       {/* Analysis button */}
-      <button className="flex w-full items-center justify-center gap-2 bg-blue-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-600">
+      <button className=" rounded-lg flex w-full items-center justify-center gap-2 bg-blue-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-600">
         Start AI Analysis
         <Zap className="h-4 w-4" />
       </button>

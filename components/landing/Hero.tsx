@@ -1,7 +1,18 @@
+"use client"
+
 import { CirclePlay, FileUp, Sparkles } from "lucide-react";
 import Image from "next/image";
 
+const uploadFile = () => {
+  window.location.href = "/upload";
+};
+
+const viewDemo = () => {
+  window.location.href = "/demo";
+};
+
 const Hero = () => {
+
   return (
     <section className="overflow-hidden bg-gray-100 px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
       <div className="relative mx-auto flex max-w-7xl flex-col gap-12 lg:flex-row lg:items-center lg:gap-8">
@@ -26,11 +37,17 @@ const Hero = () => {
           </div>
           {/* CTA  */}
           <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-            <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-6 py-4 font-bold text-white transition-colors duration-200 hover:bg-blue-600 sm:w-auto">
+            <button 
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-blue-700 px-6 py-4 font-bold text-white transition-colors duration-200 hover:bg-blue-600 sm:w-auto"
+              onClick={uploadFile}
+            >
               <FileUp />
               Upload Resume
             </button>
-            <button className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-gray-200 px-6 py-4 text-gray-800 transition-colors duration-200 hover:bg-gray-300 sm:w-auto">
+            <button 
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-gray-200 px-6 py-4 text-gray-800 transition-colors duration-200 hover:bg-gray-300 sm:w-auto"
+              onClick={viewDemo}
+            >
               <CirclePlay color="#5f49d8" />
               View Demo
             </button>

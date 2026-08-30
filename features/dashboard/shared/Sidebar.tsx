@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 import {
   LayoutDashboard,
@@ -39,19 +40,27 @@ const sidebarItems = [
   },
 ];
 
+const handleLogout = async () => {
+  await authClient.signOut({
+    fetchOptions: {
+      onSuccess: () => {
+        window.location.href = "/";
+      },
+    },
+  });
+};
+
 const Sidebar = () => {
   const pathname = usePathname();
   return (
     <aside className="w-64  bg-white text-black p-4 justify-between flex flex-col border-r-2 border-gray-200">
-
-     <nav className="space-y-2">
-      <h1 className="text-3xl font-bold p-3 text-blue-700">Resume AI</h1>
+      <nav className="space-y-2">
+        <h1 className="text-3xl font-bold p-3 text-blue-700">Resume AI</h1>
         {sidebarItems.map((item) => {
           const Icon = item.icon;
 
           const isActive =
-            pathname === item.href ||
-            pathname.startsWith(`${item.href}/`);
+            pathname === item.href || pathname.startsWith(`${item.href}/`);
 
           return (
             <Link
@@ -71,8 +80,12 @@ const Sidebar = () => {
         })}
       </nav>
 
-      <button className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
-        Log Out 
+      <button
+        type="button"
+        onClick={handleLogout}
+       className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+      >
+        Log Out
       </button>
     </aside>
   );
