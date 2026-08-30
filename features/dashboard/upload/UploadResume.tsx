@@ -3,10 +3,10 @@ import ResumePreviewCard from "./ResumePreviewCard";
 
 const UploadResume = () => {
   return (
-    <section className="min-h-full px-6 py-8 lg:px-10">
+    <section className="min-h-full px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
       {/* Page Heading */}
       <div className="mx-auto mb-8 max-w-7xl text-center">
-        <h1 className="text-3xl font-bold text-black">
+        <h1 className="text-2xl font-bold text-black sm:text-3xl">
           Upload Your Resume
         </h1>
 

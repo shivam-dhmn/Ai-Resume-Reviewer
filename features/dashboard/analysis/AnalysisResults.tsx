@@ -7,7 +7,7 @@ import PriorityImprovements from "./PriorityImprovements";
 
 const AnalysisResults = () => {
   return (
-    <section className="min-h-full bg-slate-50 p-6 lg:p-8">
+    <section className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
         {/* Page Header */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -25,7 +25,7 @@ const AnalysisResults = () => {
             </p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <button className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-50">
               Analyze Again
             </button>

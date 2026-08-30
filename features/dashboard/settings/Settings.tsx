@@ -11,8 +11,6 @@ import {
   Trash2,
 } from "lucide-react";
 
-
-
 type SettingsProps = {
   user: {
     id: string;
@@ -26,11 +24,11 @@ const Settings = ({ user }: SettingsProps) => {
   const [activeTab, setActiveTab] = useState("Account");
 
   const initials = user.name
-  .split(" ")
-  .map((word) => word[0])
-  .join("")
-  .slice(0, 2)
-  .toUpperCase();
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 
   const settingsTabs = [
     {
@@ -48,11 +46,11 @@ const Settings = ({ user }: SettingsProps) => {
   ];
 
   return (
-    <section className="min-h-full bg-slate-50 px-6 py-8 lg:px-10">
+    <section className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
       <div className="mx-auto max-w-6xl">
         {/* Page heading */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
             Settings
           </h1>
         </div>
@@ -60,7 +58,7 @@ const Settings = ({ user }: SettingsProps) => {
         <div className="grid gap-8 lg:grid-cols-[180px_1fr]">
           {/* Settings navigation */}
           <aside>
-            <nav className="space-y-1">
+            <nav className="mobile-scrollbar-hidden flex gap-2 overflow-x-auto pb-1 lg:block lg:space-y-1">
               {settingsTabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.label;
@@ -70,7 +68,7 @@ const Settings = ({ user }: SettingsProps) => {
                     key={tab.label}
                     type="button"
                     onClick={() => setActiveTab(tab.label)}
-                    className={`flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs transition ${
+                    className={`flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-left text-xs transition lg:w-full ${
                       isActive
                         ? "bg-blue-100 text-blue-700"
                         : "text-slate-600 hover:bg-slate-100"
@@ -138,10 +136,10 @@ const Settings = ({ user }: SettingsProps) => {
                         />
                       </div>
 
-                      <div className="flex justify-end">
+                      <div className="flex justify-stretch sm:justify-end">
                         <button
                           type="button"
-                          className="rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-blue-700"
+                          className="w-full rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-blue-700 sm:w-auto"
                         >
                           Save Changes
                         </button>

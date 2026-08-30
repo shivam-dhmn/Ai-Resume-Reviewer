@@ -18,12 +18,12 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50">
+    <div className="min-h-screen bg-slate-50 lg:flex lg:h-screen lg:overflow-hidden">
       {/* This stays on every dashboard page */}
       <Sidebar />
 
       {/* This changes */}
-      <main className="min-w-0 flex-1 overflow-y-auto">
+      <main className="min-w-0 flex-1 lg:overflow-y-auto">
         {children}
       </main>
     </div>

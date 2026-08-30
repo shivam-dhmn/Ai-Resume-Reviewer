@@ -20,7 +20,7 @@ const scoreHistory = [
 
 const PerformanceTrend = () => {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-6 mt-4">
+    <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-slate-900">
           Resume Performance
@@ -31,7 +31,7 @@ const PerformanceTrend = () => {
         </p>
       </div>
 
-      <div className="h-[300px] w-full">
+      <div className="h-[240px] w-full sm:h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={scoreHistory}

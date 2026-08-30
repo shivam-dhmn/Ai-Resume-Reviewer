@@ -3,7 +3,6 @@ import { Eye, FileText } from "lucide-react";
 const ResumePreviewCard = () => {
   return (
     <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-      
       {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
         <span className="text-xs font-medium text-slate-600">
@@ -14,7 +13,7 @@ const ResumePreviewCard = () => {
       </div>
 
       {/* Empty Preview */}
-      <div className="flex min-h-[280px] flex-col items-center justify-center px-6 text-center">
+      <div className="flex min-h-[240px] flex-col items-center justify-center px-6 py-8 text-center sm:min-h-[280px]">
         <FileText className="mb-4 h-8 w-8 text-slate-300" />
 
         <p className="text-sm text-slate-300">

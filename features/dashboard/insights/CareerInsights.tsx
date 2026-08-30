@@ -2,12 +2,11 @@ import PerformanceTrend from "./PerformanceTrend";
 
 const CareerInsights = () => {
   return (
-    <section className="min-h-full bg-slate-50 p-6 lg:p-8">
+    <section className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
-
         {/* Page Heading */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">
             Career Insights
           </h1>
 
@@ -24,7 +23,6 @@ const CareerInsights = () => {
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
             {/* Current Focus */}
             <div className="rounded-xl border border-slate-200 bg-white p-5">
               <p className="text-xs font-medium text-slate-400">
@@ -81,7 +79,6 @@ const CareerInsights = () => {
 
         {/* Strength + Gap */}
         <div className="grid gap-6 lg:grid-cols-2">
-
           {/* Top Strength */}
           <div className="rounded-xl border border-slate-200 bg-white p-6">
             <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
@@ -115,8 +112,7 @@ const CareerInsights = () => {
           </div>
 
         </div>
-      <PerformanceTrend />
-
+        <PerformanceTrend />
       </div>
     </section>
   );

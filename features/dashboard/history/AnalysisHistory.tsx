@@ -74,7 +74,7 @@ const AnalysisHistory = () => {
   };
 
   return (
-    <section className="min-h-full p-6 lg:p-8">
+    <section className="min-h-full px-4 py-6 sm:px-6 lg:p-8">
       <div className="mx-auto max-w-6xl">
         {/* Header */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -89,8 +89,8 @@ const AnalysisHistory = () => {
           </div>
 
           {/* Search + Filter */}
-          <div className="flex items-center gap-2">
-            <div className="relative">
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+            <div className="relative w-full sm:w-auto">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
 
               <input
@@ -98,14 +98,14 @@ const AnalysisHistory = () => {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search documents..."
-                className="h-9 w-44 rounded-md border border-slate-200 bg-white pl-9 pr-3 text-xs text-slate-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+                className="h-9 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-xs text-slate-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 sm:w-56"
               />
             </div>
 
             <button
               type="button"
               onClick={() => setFilterOpen((prev) => !prev)}
-              className={`flex h-9 items-center gap-2 rounded-md border px-3 text-xs transition ${
+              className={`flex h-9 w-full items-center justify-center gap-2 rounded-md border px-3 text-xs transition sm:w-auto ${
                 filterOpen
                   ? "border-blue-200 bg-blue-50 text-blue-600"
                   : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
@@ -128,8 +128,8 @@ const AnalysisHistory = () => {
 
         {/* Table */}
         <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[700px] border-collapse">
+          <div className="mobile-scrollbar-hidden overflow-x-auto">
+            <table className="w-full min-w-[640px] border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50">
                   <th className="px-4 py-3 text-left text-[10px] font-semibold uppercase tracking-wide text-slate-500">
@@ -249,7 +249,7 @@ const AnalysisHistory = () => {
           <div className="flex flex-col gap-3 text-[9px] text-slate-400 sm:flex-row sm:items-center sm:justify-between">
             <p>© 2024 CareerMaster AI. AI-led professional tools.</p>
 
-            <div className="flex gap-4">
+            <div className="flex flex-wrap gap-4">
               <Link href="#" className="hover:text-slate-600">
                 Privacy Policy
               </Link>
