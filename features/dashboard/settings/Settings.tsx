@@ -11,8 +11,26 @@ import {
   Trash2,
 } from "lucide-react";
 
-const Settings = () => {
+
+
+type SettingsProps = {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image?: string | null;
+  };
+};
+
+const Settings = ({ user }: SettingsProps) => {
   const [activeTab, setActiveTab] = useState("Account");
+
+  const initials = user.name
+  .split(" ")
+  .map((word) => word[0])
+  .join("")
+  .slice(0, 2)
+  .toUpperCase();
 
   const settingsTabs = [
     {
@@ -82,7 +100,7 @@ const Settings = () => {
                     {/* Avatar */}
                     <div className="shrink-0">
                       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-lg font-semibold text-blue-700">
-                        AR
+                        {initials}
                       </div>
 
                       <button
@@ -103,7 +121,7 @@ const Settings = () => {
 
                         <input
                           type="text"
-                          defaultValue="Alex Rivera"
+                          defaultValue={user.name}
                           className="w-full rounded-md border border-slate-200 px-3 py-2 text-xs text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
                       </div>
@@ -115,7 +133,7 @@ const Settings = () => {
 
                         <input
                           type="email"
-                          defaultValue="alex.rivera@example.com"
+                          defaultValue={user.email}
                           className="w-full rounded-md border border-slate-200 px-3 py-2 text-xs text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
                       </div>

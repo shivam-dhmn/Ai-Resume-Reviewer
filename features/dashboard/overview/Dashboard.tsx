@@ -1,12 +1,21 @@
 import ResumeUploadCard from "../upload/ResumeUploadCard";
 
-const Dashboard = () => {
+type DashboardProps = {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image?: string | null;
+  };
+};
+
+const Dashboard = ({ user }: DashboardProps) => {
   return (
     <section className="min-h-screen bg-gray-100 p-6 text-black lg:p-8">
       {/* Top section */}
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-slate-900">
-          Welcome back, Alex!
+          Welcome back, {user.name}
         </h1>
 
         <p className="mt-1 text-sm text-slate-500">
