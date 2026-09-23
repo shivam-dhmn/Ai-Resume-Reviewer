@@ -4,8 +4,14 @@ import AnalysisBreakdown from "./AnalysisBreakdown";
 import MissingKeywords from "./MissingKeywords";
 import GrammarImpact from "./GrammarImpact";
 import PriorityImprovements from "./PriorityImprovements";
+import type { ResumeAnalysis } from "./types";
 
-const AnalysisResults = () => {
+type AnalysisResultsProps = {
+  analysis: ResumeAnalysis;
+  fileName: string;
+};
+
+const AnalysisResults = ({ analysis, fileName }: AnalysisResultsProps) => {
   return (
     <section className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
@@ -17,11 +23,11 @@ const AnalysisResults = () => {
             </p>
 
             <h1 className="mt-1 text-2xl font-bold text-slate-900 sm:text-3xl">
-              Senior Product Manager Resume
+              {analysis.targetRole} Resume
             </h1>
 
             <p className="mt-1 text-sm text-slate-500">
-              Detailed analysis of your resume and career readiness.
+              {fileName}
             </p>
           </div>
 
@@ -38,14 +44,17 @@ const AnalysisResults = () => {
 
         {/* Top Cards */}
         <div className="grid gap-6 lg:grid-cols-2">
-          <OverallScoreCard />
-          <ATSCompatibilityCard />
+          <OverallScoreCard score={analysis.overallScore} summary={analysis.summary} />
+          <ATSCompatibilityCard score={analysis.atsScore} />
         </div>
-        <AnalysisBreakdown />
-        <MissingKeywords />
+        <AnalysisBreakdown
+          strengths={analysis.strengths}
+          weaknesses={analysis.weaknesses}
+        />
+        <MissingKeywords keywords={analysis.keywords.missing} />
         <div className="mt-6 grid gap-6 lg:grid-cols-2">
-          <GrammarImpact />
-          <PriorityImprovements />
+          <GrammarImpact grammar={analysis.grammar} />
+          <PriorityImprovements improvements={analysis.priorityImprovements} />
         </div>
       </div>
     </section>

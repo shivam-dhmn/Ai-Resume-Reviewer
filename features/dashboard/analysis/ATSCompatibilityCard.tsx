@@ -1,7 +1,11 @@
 import { CheckCircle2 } from "lucide-react";
 
-const ATSCompatibilityCard = () => {
-  const atsScore = 92;
+type ATSCompatibilityCardProps = {
+  score: number;
+};
+
+const ATSCompatibilityCard = ({ score }: ATSCompatibilityCardProps) => {
+  const matchLabel = score >= 80 ? "High Match" : score >= 60 ? "Moderate Match" : "Needs Work";
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
@@ -12,12 +16,14 @@ const ATSCompatibilityCard = () => {
           </p>
 
           <p className="mt-2 text-sm text-slate-500">
-            Your resume is highly compatible with applicant tracking systems.
+            {score >= 80
+              ? "Your resume is highly compatible with applicant tracking systems."
+              : "Your resume has opportunities to improve applicant tracking system compatibility."}
           </p>
         </div>
 
         <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-600">
-          High Match
+          {matchLabel}
         </span>
       </div>
 
@@ -28,14 +34,14 @@ const ATSCompatibilityCard = () => {
           </span>
 
           <span className="text-sm font-semibold text-slate-700">
-            {atsScore}%
+            {score}%
           </span>
         </div>
 
         <div className="h-2 overflow-hidden rounded-full bg-slate-100">
           <div
             className="h-full rounded-full bg-blue-600"
-            style={{ width: `${atsScore}%` }}
+            style={{ width: `${score}%` }}
           />
         </div>
       </div>

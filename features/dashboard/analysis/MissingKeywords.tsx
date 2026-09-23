@@ -1,14 +1,10 @@
 import { Search, AlertCircle } from "lucide-react";
 
-const MissingKeywords = () => {
-  const keywords = [
-    "A/B Testing",
-    "SQL",
-    "Experimentation",
-    "Metrics & KPIs",
-    "Data Storytelling",
-    "Product Analytics",
-  ];
+type MissingKeywordsProps = {
+  keywords: string[];
+};
+
+const MissingKeywords = ({ keywords }: MissingKeywordsProps) => {
 
   return (
     <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5">

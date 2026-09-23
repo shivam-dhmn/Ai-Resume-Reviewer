@@ -2,8 +2,11 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { put } from "@vercel/blob";
 import { headers } from "next/headers";
+import { extractText, getDocumentProxy } from "unpdf";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+
+export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
@@ -46,25 +49,50 @@ export async function POST(request: Request) {
       );
     }
 
-    // 5. Create a unique storage path
+    // 5. Extract readable resume text before persisting the upload.
+    let extractedText: string;
+
+    try {
+      const pdf = await getDocumentProxy(new Uint8Array(await file.arrayBuffer()));
+      const extraction = await extractText(pdf, { mergePages: true });
+
+      extractedText = typeof extraction.text === "string" ? extraction.text.trim() : "";
+    } catch (error) {
+      console.error("Resume text extraction error:", error);
+
+      return Response.json(
+        { error: "We could not read text from this PDF. Please upload a text-based resume PDF." },
+        { status: 422 },
+      );
+    }
+
+    if (!extractedText) {
+      return Response.json(
+        { error: "This PDF does not contain readable text. Please upload a text-based resume PDF." },
+        { status: 422 },
+      );
+    }
+
+    // 6. Create a unique storage path
     const storagePath = `resumes/${session.user.id}/${crypto.randomUUID()}.pdf`;
 
-    // 6. Upload the file to Vercel Blob
+    // 7. Upload the file to Vercel Blob
     const blob = await put(storagePath, file, {
       access: "private",
     });
 
-    // 7. Create the resume record in Neon
+    // 8. Create the resume record in Neon
     const resume = await prisma.resume.create({
       data: {
         userId: session.user.id,
         fileName: file.name,
         fileType: file.type,
         fileUrl: blob.url,
+        extractedText,
       },
     });
 
-    // 8. Return success
+    // 9. Return success
     return Response.json({
       success: true,
       resume: {

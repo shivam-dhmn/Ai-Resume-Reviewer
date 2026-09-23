@@ -1,6 +1,11 @@
 import { CheckCircle2, AlertCircle } from "lucide-react";
 
-const AnalysisBreakdown = () => {
+type AnalysisBreakdownProps = {
+  strengths: string[];
+  weaknesses: string[];
+};
+
+const AnalysisBreakdown = ({ strengths, weaknesses }: AnalysisBreakdownProps) => {
   return (
     <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
       <h2 className="text-lg font-semibold text-slate-900">
@@ -16,34 +21,11 @@ const AnalysisBreakdown = () => {
           </h3>
 
           <div className="mt-4 space-y-3">
-            <div className="rounded-lg bg-emerald-50 p-3">
-              <p className="text-sm font-medium text-slate-800">
-                Strong leadership experience
-              </p>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
-                Your resume clearly demonstrates ownership and cross-functional
-                leadership.
-              </p>
-            </div>
-
-            <div className="rounded-lg bg-emerald-50 p-3">
-              <p className="text-sm font-medium text-slate-800">
-                Clear product ownership
-              </p>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
-                Your experience shows strong responsibility across product
-                strategy and execution.
-              </p>
-            </div>
-
-            <div className="rounded-lg bg-emerald-50 p-3">
-              <p className="text-sm font-medium text-slate-800">
-                Good resume structure
-              </p>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
-                The document is easy to scan and follows a consistent structure.
-              </p>
-            </div>
+            {strengths.map((strength) => (
+              <div key={strength} className="rounded-lg bg-emerald-50 p-3">
+                <p className="text-sm leading-5 text-slate-800">{strength}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -55,34 +37,11 @@ const AnalysisBreakdown = () => {
           </h3>
 
           <div className="mt-4 space-y-3">
-            <div className="rounded-lg bg-amber-50 p-3">
-              <p className="text-sm font-medium text-slate-800">
-                Quantify your achievements
-              </p>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
-                Several bullets describe responsibilities without measurable
-                business outcomes.
-              </p>
-            </div>
-
-            <div className="rounded-lg bg-amber-50 p-3">
-              <p className="text-sm font-medium text-slate-800">
-                Strengthen technical evidence
-              </p>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
-                Add clearer evidence of analytics, experimentation, and technical
-                decision-making.
-              </p>
-            </div>
-
-            <div className="rounded-lg bg-amber-50 p-3">
-              <p className="text-sm font-medium text-slate-800">
-                Improve keyword coverage
-              </p>
-              <p className="mt-1 text-xs leading-5 text-slate-500">
-                A few important keywords for the target role are currently missing.
-              </p>
-            </div>
+            {weaknesses.map((weakness) => (
+              <div key={weakness} className="rounded-lg bg-amber-50 p-3">
+                <p className="text-sm leading-5 text-slate-800">{weakness}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
