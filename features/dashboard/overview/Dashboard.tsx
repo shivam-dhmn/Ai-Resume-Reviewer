@@ -20,6 +20,8 @@ const Dashboard = ({ user, history }: DashboardProps) => {
           recentAnalyses.length
       )
     : null;
+  const remainingCredits = Math.max(20 - history.length, 0);
+  const creditProgress = (remainingCredits / 20) * 100;
 
   return (
     <section className="min-h-full bg-gray-100 px-4 py-6 text-black sm:px-6 lg:p-8">
@@ -94,12 +96,15 @@ const Dashboard = ({ user, history }: DashboardProps) => {
               </p>
 
             <p className="mt-3 text-3xl font-bold text-slate-900">
-              12
+              {remainingCredits}
               <span className="text-sm font-normal text-slate-400"> / 20</span>
             </p>
 
             <div className="mt-4 h-2 rounded-full bg-slate-200">
-              <div className="h-full w-[60%] rounded-full bg-blue-600" />
+              <div
+                className="h-full rounded-full bg-blue-600"
+                style={{ width: `${creditProgress}%` }}
+              />
             </div>
           </div>
 
