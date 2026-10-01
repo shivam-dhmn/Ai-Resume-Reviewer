@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
 import Dashboard from "@/features/dashboard/overview/Dashboard";
+import { isResumeAnalysis } from "@/features/dashboard/analysis/types";
+import { prisma } from "@/lib/prisma";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({
@@ -12,5 +14,41 @@ export default async function DashboardPage() {
     return null;
   }
 
-  return <Dashboard user={session.user} />;
+  const analyses = await prisma.analysis.findMany({
+    where: {
+      resume: {
+        userId: session.user.id,
+      },
+    },
+    include: {
+      resume: {
+        select: {
+          fileName: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const history = analyses.flatMap((analysis) => {
+    if (!isResumeAnalysis(analysis.result) || analysis.overallScore === null) {
+      return [];
+    }
+
+    return [{
+      id: analysis.id,
+      date: new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "2-digit",
+        year: "numeric",
+      }).format(analysis.createdAt),
+      document: analysis.resume.fileName,
+      role: analysis.result.targetRole,
+      score: analysis.overallScore,
+    }];
+  });
+
+  return <Dashboard user={session.user} history={history} />;
 }
