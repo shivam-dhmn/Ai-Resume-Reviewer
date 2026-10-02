@@ -3,6 +3,7 @@
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { CloudUpload, FileText, X, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
+import AnalyzingScreen from "./AnalyzingScreen";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
@@ -74,6 +75,9 @@ const ResumeUploadCard = () => {
 
     handleFile(droppedFile);
   };
+  if (isUploading) {
+  return <AnalyzingScreen />;
+}
 
   const handleUpload = async () => {
     if (!file) {

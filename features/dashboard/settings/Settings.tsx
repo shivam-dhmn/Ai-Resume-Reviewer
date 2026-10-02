@@ -1,10 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   UserRound,
-  Bell,
-  Palette,
   Camera,
   CreditCard,
   Sparkles,
@@ -23,7 +22,16 @@ type SettingsProps = {
 };
 
 const Settings = ({ user, monthlyAnalysisCount }: SettingsProps) => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Account");
+  const [formData, setFormData] = useState({
+    name: user.name,
+    email: user.email,
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
   const remainingCredits = Math.max(
     MONTHLY_ANALYSIS_LIMIT - monthlyAnalysisCount,
     0,
@@ -54,6 +62,59 @@ const Settings = ({ user, monthlyAnalysisCount }: SettingsProps) => {
     //   icon: Palette,
     // },
   ];
+
+  const handleSaveChanges = async () => {
+    const trimmedName = formData.name.trim();
+    const trimmedEmail = formData.email.trim();
+
+    if (!trimmedName) {
+      setSaveError("Name is required.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(trimmedEmail)) {
+      setSaveError("Please enter a valid email address.");
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveError(null);
+    setSaveMessage(null);
+
+    try {
+      const response = await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: trimmedName,
+          email: trimmedEmail,
+        }),
+      });
+
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update profile.");
+      }
+
+      setSaveMessage("Profile updated successfully.");
+      router.refresh();
+    } catch (error) {
+      setSaveError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while updating your profile.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <section className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
@@ -129,7 +190,13 @@ const Settings = ({ user, monthlyAnalysisCount }: SettingsProps) => {
 
                         <input
                           type="text"
-                          defaultValue={user.name}
+                          value={formData.name}
+                          onChange={(event) =>
+                            setFormData((current) => ({
+                              ...current,
+                              name: event.target.value,
+                            }))
+                          }
                           className="w-full rounded-md border border-slate-200 px-3 py-2 text-xs text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
                       </div>
@@ -141,17 +208,37 @@ const Settings = ({ user, monthlyAnalysisCount }: SettingsProps) => {
 
                         <input
                           type="email"
-                          defaultValue={user.email}
+                          value={formData.email}
+                          onChange={(event) =>
+                            setFormData((current) => ({
+                              ...current,
+                              email: event.target.value,
+                            }))
+                          }
                           className="w-full rounded-md border border-slate-200 px-3 py-2 text-xs text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
                       </div>
 
-                      <div className="flex justify-stretch sm:justify-end">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                        {saveError && (
+                          <p className="text-[11px] font-medium text-red-600">
+                            {saveError}
+                          </p>
+                        )}
+
+                        {saveMessage && (
+                          <p className="text-[11px] font-medium text-green-600">
+                            {saveMessage}
+                          </p>
+                        )}
+
                         <button
                           type="button"
-                          className="w-full rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-blue-700 sm:w-auto"
+                          onClick={handleSaveChanges}
+                          disabled={isSaving}
+                          className="w-full rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400 sm:w-auto"
                         >
-                          Save Changes
+                          {isSaving ? "Saving..." : "Save Changes"}
                         </button>
                       </div>
                     </div>
