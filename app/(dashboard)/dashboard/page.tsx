@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import Dashboard from "@/features/dashboard/overview/Dashboard";
 import { isResumeAnalysis } from "@/features/dashboard/analysis/types";
 import { prisma } from "@/lib/prisma";
+import { getCurrentUsagePeriodStart } from "@/lib/usage";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({
@@ -50,5 +51,15 @@ export default async function DashboardPage() {
     }];
   });
 
-  return <Dashboard user={session.user} history={history} />;
+  const monthlyAnalysisCount = analyses.filter(
+    (analysis) => analysis.createdAt >= getCurrentUsagePeriodStart(),
+  ).length;
+
+  return (
+    <Dashboard
+      user={session.user}
+      history={history}
+      monthlyAnalysisCount={monthlyAnalysisCount}
+    />
+  );
 }

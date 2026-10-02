@@ -10,6 +10,7 @@ import {
   Sparkles,
   Trash2,
 } from "lucide-react";
+import { MONTHLY_ANALYSIS_LIMIT } from "@/lib/usage";
 
 type SettingsProps = {
   user: {
@@ -18,10 +19,19 @@ type SettingsProps = {
     email: string;
     image?: string | null;
   };
+  monthlyAnalysisCount: number;
 };
 
-const Settings = ({ user }: SettingsProps) => {
+const Settings = ({ user, monthlyAnalysisCount }: SettingsProps) => {
   const [activeTab, setActiveTab] = useState("Account");
+  const remainingCredits = Math.max(
+    MONTHLY_ANALYSIS_LIMIT - monthlyAnalysisCount,
+    0,
+  );
+  const usageProgress = Math.min(
+    (monthlyAnalysisCount / MONTHLY_ANALYSIS_LIMIT) * 100,
+    100,
+  );
 
   const initials = user.name
     .split(" ")
@@ -35,14 +45,14 @@ const Settings = ({ user }: SettingsProps) => {
       label: "Account",
       icon: UserRound,
     },
-    {
-      label: "Notifications",
-      icon: Bell,
-    },
-    {
-      label: "Theme",
-      icon: Palette,
-    },
+    // {
+    //   label: "Notifications",
+    //   icon: Bell,
+    // },
+    // {
+    //   label: "Theme",
+    //   icon: Palette,
+    // },
   ];
 
   return (
@@ -216,34 +226,20 @@ const Settings = ({ user }: SettingsProps) => {
                         </span>
 
                         <span className="text-[11px] font-semibold text-slate-700">
-                          12 / 20
+                          {monthlyAnalysisCount} / {MONTHLY_ANALYSIS_LIMIT}
                         </span>
                       </div>
 
                       <div className="mt-2 h-1.5 rounded-full bg-slate-100">
-                        <div className="h-full w-[60%] rounded-full bg-blue-600" />
-                      </div>
-                    </div>
-
-                    {/* Cover letters */}
-                    <div className="mt-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] text-slate-600">
-                          Cover Letters
-                        </span>
-
-                        <span className="text-[11px] font-semibold text-slate-700">
-                          4 / 5
-                        </span>
-                      </div>
-
-                      <div className="mt-2 h-1.5 rounded-full bg-slate-100">
-                        <div className="h-full w-[80%] rounded-full bg-blue-600" />
+                        <div
+                          className="h-full rounded-full bg-blue-600"
+                          style={{ width: `${usageProgress}%` }}
+                        />
                       </div>
                     </div>
 
                     <p className="mt-4 text-[10px] leading-4 text-slate-400">
-                      Usage limits reset at the start of every billing period.
+                      {remainingCredits} analyses remaining in this billing period.
                     </p>
                   </div>
                 </div>

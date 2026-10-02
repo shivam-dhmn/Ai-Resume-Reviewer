@@ -1,6 +1,7 @@
 import ResumeUploadCard from "../upload/ResumeUploadCard";
 import Link from "next/link";
 import type { AnalysisHistoryItem } from "../history/AnalysisHistory";
+import { MONTHLY_ANALYSIS_LIMIT } from "@/lib/usage";
 
 type DashboardProps = {
   history: AnalysisHistoryItem[];
@@ -10,9 +11,10 @@ type DashboardProps = {
     email: string;
     image?: string | null;
   };
+  monthlyAnalysisCount: number;
 };
 
-const Dashboard = ({ user, history }: DashboardProps) => {
+const Dashboard = ({ user, history, monthlyAnalysisCount }: DashboardProps) => {
   const recentAnalyses = history.slice(0, 3);
   const averageScore = recentAnalyses.length
     ? Math.round(
@@ -20,8 +22,11 @@ const Dashboard = ({ user, history }: DashboardProps) => {
           recentAnalyses.length
       )
     : null;
-  const remainingCredits = Math.max(20 - history.length, 0);
-  const creditProgress = (remainingCredits / 20) * 100;
+  const remainingCredits = Math.max(
+    MONTHLY_ANALYSIS_LIMIT - monthlyAnalysisCount,
+    0,
+  );
+  const creditProgress = (remainingCredits / MONTHLY_ANALYSIS_LIMIT) * 100;
 
   return (
     <section className="min-h-full bg-gray-100 px-4 py-6 text-black sm:px-6 lg:p-8">
@@ -92,12 +97,14 @@ const Dashboard = ({ user, history }: DashboardProps) => {
         <div className="space-y-6">
             <div className="rounded-2xl border border-slate-200 bg-white p-6">
               <p className="text-xs font-medium text-slate-500">
-                ANALYSIS CREDITS
+                MONTHLY ANALYSIS CREDITS
               </p>
 
             <p className="mt-3 text-3xl font-bold text-slate-900">
               {remainingCredits}
-              <span className="text-sm font-normal text-slate-400"> / 20</span>
+              <span className="text-sm font-normal text-slate-400">
+                {" "}/ {MONTHLY_ANALYSIS_LIMIT}
+              </span>
             </p>
 
             <div className="mt-4 h-2 rounded-full bg-slate-200">
