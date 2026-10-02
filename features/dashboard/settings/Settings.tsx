@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   UserRound,
-  Bell,
-  Palette,
   Camera,
   CreditCard,
   Sparkles,
   Trash2,
 } from "lucide-react";
+import { MONTHLY_ANALYSIS_LIMIT } from "@/lib/usage";
 
 type SettingsProps = {
   user: {
@@ -18,10 +18,28 @@ type SettingsProps = {
     email: string;
     image?: string | null;
   };
+  monthlyAnalysisCount: number;
 };
 
-const Settings = ({ user }: SettingsProps) => {
+const Settings = ({ user, monthlyAnalysisCount }: SettingsProps) => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("Account");
+  const [formData, setFormData] = useState({
+    name: user.name,
+    email: user.email,
+  });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveMessage, setSaveMessage] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  const remainingCredits = Math.max(
+    MONTHLY_ANALYSIS_LIMIT - monthlyAnalysisCount,
+    0,
+  );
+  const usageProgress = Math.min(
+    (monthlyAnalysisCount / MONTHLY_ANALYSIS_LIMIT) * 100,
+    100,
+  );
 
   const initials = user.name
     .split(" ")
@@ -35,15 +53,68 @@ const Settings = ({ user }: SettingsProps) => {
       label: "Account",
       icon: UserRound,
     },
-    {
-      label: "Notifications",
-      icon: Bell,
-    },
-    {
-      label: "Theme",
-      icon: Palette,
-    },
+    // {
+    //   label: "Notifications",
+    //   icon: Bell,
+    // },
+    // {
+    //   label: "Theme",
+    //   icon: Palette,
+    // },
   ];
+
+  const handleSaveChanges = async () => {
+    const trimmedName = formData.name.trim();
+    const trimmedEmail = formData.email.trim();
+
+    if (!trimmedName) {
+      setSaveError("Name is required.");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(trimmedEmail)) {
+      setSaveError("Please enter a valid email address.");
+      return;
+    }
+
+    setIsSaving(true);
+    setSaveError(null);
+    setSaveMessage(null);
+
+    try {
+      const response = await fetch("/api/user/profile", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: trimmedName,
+          email: trimmedEmail,
+        }),
+      });
+
+      const data = (await response.json().catch(() => ({}))) as {
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to update profile.");
+      }
+
+      setSaveMessage("Profile updated successfully.");
+      router.refresh();
+    } catch (error) {
+      setSaveError(
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while updating your profile.",
+      );
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <section className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:px-10 lg:py-8">
@@ -119,7 +190,13 @@ const Settings = ({ user }: SettingsProps) => {
 
                         <input
                           type="text"
-                          defaultValue={user.name}
+                          value={formData.name}
+                          onChange={(event) =>
+                            setFormData((current) => ({
+                              ...current,
+                              name: event.target.value,
+                            }))
+                          }
                           className="w-full rounded-md border border-slate-200 px-3 py-2 text-xs text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
                       </div>
@@ -131,17 +208,37 @@ const Settings = ({ user }: SettingsProps) => {
 
                         <input
                           type="email"
-                          defaultValue={user.email}
+                          value={formData.email}
+                          onChange={(event) =>
+                            setFormData((current) => ({
+                              ...current,
+                              email: event.target.value,
+                            }))
+                          }
                           className="w-full rounded-md border border-slate-200 px-3 py-2 text-xs text-slate-700 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                         />
                       </div>
 
-                      <div className="flex justify-stretch sm:justify-end">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
+                        {saveError && (
+                          <p className="text-[11px] font-medium text-red-600">
+                            {saveError}
+                          </p>
+                        )}
+
+                        {saveMessage && (
+                          <p className="text-[11px] font-medium text-green-600">
+                            {saveMessage}
+                          </p>
+                        )}
+
                         <button
                           type="button"
-                          className="w-full rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-blue-700 sm:w-auto"
+                          onClick={handleSaveChanges}
+                          disabled={isSaving}
+                          className="w-full rounded-md bg-blue-600 px-4 py-2 text-xs font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400 sm:w-auto"
                         >
-                          Save Changes
+                          {isSaving ? "Saving..." : "Save Changes"}
                         </button>
                       </div>
                     </div>
@@ -216,34 +313,20 @@ const Settings = ({ user }: SettingsProps) => {
                         </span>
 
                         <span className="text-[11px] font-semibold text-slate-700">
-                          12 / 20
+                          {monthlyAnalysisCount} / {MONTHLY_ANALYSIS_LIMIT}
                         </span>
                       </div>
 
                       <div className="mt-2 h-1.5 rounded-full bg-slate-100">
-                        <div className="h-full w-[60%] rounded-full bg-blue-600" />
-                      </div>
-                    </div>
-
-                    {/* Cover letters */}
-                    <div className="mt-4">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[11px] text-slate-600">
-                          Cover Letters
-                        </span>
-
-                        <span className="text-[11px] font-semibold text-slate-700">
-                          4 / 5
-                        </span>
-                      </div>
-
-                      <div className="mt-2 h-1.5 rounded-full bg-slate-100">
-                        <div className="h-full w-[80%] rounded-full bg-blue-600" />
+                        <div
+                          className="h-full rounded-full bg-blue-600"
+                          style={{ width: `${usageProgress}%` }}
+                        />
                       </div>
                     </div>
 
                     <p className="mt-4 text-[10px] leading-4 text-slate-400">
-                      Usage limits reset at the start of every billing period.
+                      {remainingCredits} analyses remaining in this billing period.
                     </p>
                   </div>
                 </div>

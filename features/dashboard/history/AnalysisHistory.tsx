@@ -4,13 +4,10 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Search,
-  SlidersHorizontal,
   FileText,
-  ChevronLeft,
-  ChevronRight,
 } from "lucide-react";
 
-type Analysis = {
+export type AnalysisHistoryItem = {
   id: string;
   date: string;
   document: string;
@@ -18,33 +15,12 @@ type Analysis = {
   score: number;
 };
 
-const analyses: Analysis[] = [
-  {
-    id: "1",
-    date: "Oct 24, 2024",
-    document: "Alex_Rivera_Resume_TechLead.pdf",
-    role: "Senior Product Manager",
-    score: 86,
-  },
-  {
-    id: "2",
-    date: "Oct 15, 2024",
-    document: "Rivera_SoftwareEng_2024.docx",
-    role: "Software Engineer",
-    score: 64,
-  },
-  {
-    id: "3",
-    date: "Sep 02, 2024",
-    document: "Old_Resume_Design_v2.pdf",
-    role: "Product Designer",
-    score: 35,
-  },
-];
+type AnalysisHistoryProps = {
+  analyses: AnalysisHistoryItem[];
+};
 
-const AnalysisHistory = () => {
+const AnalysisHistory = ({ analyses }: AnalysisHistoryProps) => {
   const [search, setSearch] = useState("");
-  const [filterOpen, setFilterOpen] = useState(false);
 
   const filteredAnalyses = useMemo(() => {
     const value = search.toLowerCase().trim();
@@ -59,7 +35,7 @@ const AnalysisHistory = () => {
         analysis.role.toLowerCase().includes(value) ||
         analysis.date.toLowerCase().includes(value)
     );
-  }, [search]);
+  }, [analyses, search]);
 
   const getScoreStyle = (score: number) => {
     if (score >= 80) {
@@ -88,8 +64,7 @@ const AnalysisHistory = () => {
             </p>
           </div>
 
-          {/* Search + Filter */}
-          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
+          <div className="w-full sm:w-auto">
             <div className="relative w-full sm:w-auto">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
 
@@ -101,30 +76,8 @@ const AnalysisHistory = () => {
                 className="h-9 w-full rounded-md border border-slate-200 bg-white pl-9 pr-3 text-xs text-slate-700 outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100 sm:w-56"
               />
             </div>
-
-            <button
-              type="button"
-              onClick={() => setFilterOpen((prev) => !prev)}
-              className={`flex h-9 w-full items-center justify-center gap-2 rounded-md border px-3 text-xs transition sm:w-auto ${
-                filterOpen
-                  ? "border-blue-200 bg-blue-50 text-blue-600"
-                  : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-              }`}
-            >
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-              Filter
-            </button>
           </div>
         </div>
-
-        {/* Optional filter panel */}
-        {filterOpen && (
-          <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4">
-            <p className="text-xs font-medium text-slate-600">
-              Filters will be connected later.
-            </p>
-          </div>
-        )}
 
         {/* Table */}
         <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
@@ -194,7 +147,7 @@ const AnalysisHistory = () => {
                     {/* Actions */}
                     <td className="px-4 py-4 text-right">
                       <Link
-                        href={`/dashboard/analysis/${analysis.id}`}
+                        href={`/analysis/${analysis.id}`}
                         className="text-xs font-medium text-blue-600 hover:underline"
                       >
                         View
@@ -217,30 +170,10 @@ const AnalysisHistory = () => {
             </table>
           </div>
 
-          {/* Bottom pagination */}
-          <div className="flex flex-col gap-3 border-t border-slate-100 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="border-t border-slate-100 px-4 py-3">
             <p className="text-[10px] text-slate-400">
               Showing {filteredAnalyses.length} of {analyses.length} entries
             </p>
-
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                disabled
-                className="flex items-center gap-1 rounded border border-slate-200 px-2.5 py-1 text-[10px] text-slate-400 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft className="h-3 w-3" />
-                Prev
-              </button>
-
-              <button
-                type="button"
-                className="flex items-center gap-1 rounded border border-slate-200 px-2.5 py-1 text-[10px] text-slate-600 hover:bg-slate-50"
-              >
-                Next
-                <ChevronRight className="h-3 w-3" />
-              </button>
-            </div>
           </div>
         </div>
 

@@ -1,7 +1,11 @@
 import { CircleCheck } from "lucide-react";
 
-const OverallScoreCard = () => {
-  const score = 85;
+type OverallScoreCardProps = {
+  score: number;
+  summary: string;
+};
+
+const OverallScoreCard = ({ score, summary }: OverallScoreCardProps) => {
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-5">
@@ -23,11 +27,11 @@ const OverallScoreCard = () => {
 
       <div className="mt-4 flex items-center gap-2 text-sm text-emerald-600">
         <CircleCheck className="h-4 w-4" />
-        Strong overall resume quality
+        {score >= 80 ? "Strong overall resume quality" : "Room to strengthen your resume"}
       </div>
 
       <p className="mt-2 text-xs text-slate-400">
-        Your resume has a solid foundation and is close to being highly competitive.
+        {summary}
       </p>
     </div>
   );

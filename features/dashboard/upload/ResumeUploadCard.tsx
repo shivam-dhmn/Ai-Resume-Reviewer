@@ -2,10 +2,13 @@
 
 import { ChangeEvent, DragEvent, useRef, useState } from "react";
 import { CloudUpload, FileText, X, Zap } from "lucide-react";
+import { useRouter } from "next/navigation";
+import AnalyzingScreen from "./AnalyzingScreen";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 const ResumeUploadCard = () => {
+  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [file, setFile] = useState<File | null>(null);
@@ -72,6 +75,9 @@ const ResumeUploadCard = () => {
 
     handleFile(droppedFile);
   };
+  if (isUploading) {
+  return <AnalyzingScreen />;
+}
 
   const handleUpload = async () => {
     if (!file) {
@@ -101,14 +107,31 @@ const ResumeUploadCard = () => {
         );
       }
 
-      setSuccess("Resume uploaded successfully.");
+      const analysisResponse = await fetch(
+        `/api/resumes/${data.resume.id}/analyze`,
+        { method: "POST" },
+      );
+      const analysisData = await analysisResponse.json();
+
+      if (!analysisResponse.ok) {
+        throw new Error(
+          analysisData.error || "Something went wrong while analyzing your resume.",
+        );
+      }
+
+      if (!analysisData.analysis?.id) {
+        throw new Error("The analysis was completed, but no report was returned.");
+      }
+
+      setSuccess("Analysis complete. Opening your report...");
       setFile(null);
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
 
-      console.log("Uploaded resume:", data.resume);
+      router.push(`/analysis/${analysisData.analysis.id}`);
+      router.refresh();
     } catch (error) {
       setError(
         error instanceof Error
@@ -216,7 +239,7 @@ const ResumeUploadCard = () => {
         disabled={isUploading}
         className="flex w-full items-center justify-center gap-2 rounded-lg bg-blue-500 px-4 py-3 text-sm font-medium text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {isUploading ? "Uploading..." : "Start AI Analysis"}
+        {isUploading ? "Analyzing your resume..." : "Start AI Analysis"}
 
         {!isUploading && <Zap className="h-4 w-4" />}
       </button>

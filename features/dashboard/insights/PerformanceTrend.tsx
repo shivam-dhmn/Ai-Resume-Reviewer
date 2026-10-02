@@ -10,15 +10,16 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-const scoreHistory = [
-  { date: "Sep 02", score: 68 },
-  { date: "Sep 18", score: 74 },
-  { date: "Oct 02", score: 79 },
-  { date: "Oct 15", score: 82 },
-  { date: "Oct 24", score: 86 },
-];
+export type PerformanceTrendPoint = {
+  date: string;
+  score: number;
+};
 
-const PerformanceTrend = () => {
+type PerformanceTrendProps = {
+  scoreHistory: PerformanceTrendPoint[];
+};
+
+const PerformanceTrend = ({ scoreHistory }: PerformanceTrendProps) => {
   return (
     <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
       <div className="mb-6">

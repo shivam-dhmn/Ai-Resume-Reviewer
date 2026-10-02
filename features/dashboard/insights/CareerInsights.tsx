@@ -1,6 +1,31 @@
 import PerformanceTrend from "./PerformanceTrend";
+import type { ResumeAnalysis } from "../analysis/types";
+import type { PerformanceTrendPoint } from "./PerformanceTrend";
 
-const CareerInsights = () => {
+type CareerInsightsProps = {
+  latestAnalysis?: {
+    overallScore: number;
+    result: ResumeAnalysis;
+  };
+  trend: PerformanceTrendPoint[];
+};
+
+const CareerInsights = ({ latestAnalysis, trend }: CareerInsightsProps) => {
+  if (!latestAnalysis) {
+    return (
+      <section className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:p-8">
+        <div className="mx-auto max-w-7xl rounded-xl border border-slate-200 bg-white p-6">
+          <h1 className="text-2xl font-bold text-slate-900">Career Insights</h1>
+          <p className="mt-2 text-sm text-slate-500">
+            Complete a resume analysis to see your career insights here.
+          </p>
+        </div>
+      </section>
+    );
+  }
+
+  const { result } = latestAnalysis;
+
   return (
     <section className="min-h-full bg-slate-50 px-4 py-6 sm:px-6 lg:p-8">
       <div className="mx-auto max-w-7xl">
@@ -30,18 +55,18 @@ const CareerInsights = () => {
               </p>
 
               <p className="mt-3 text-lg font-semibold text-slate-900">
-                Product Management
+                {result.targetRole}
               </p>
             </div>
 
             {/* Experience */}
             <div className="rounded-xl border border-slate-200 bg-white p-5">
               <p className="text-xs font-medium text-slate-400">
-                EXPERIENCE LEVEL
+                EXPERIENCE SCORE
               </p>
 
               <p className="mt-3 text-lg font-semibold text-slate-900">
-                Mid-Senior
+                {result.experience.score}/100
               </p>
             </div>
 
@@ -52,7 +77,7 @@ const CareerInsights = () => {
               </p>
 
               <p className="mt-3 text-3xl font-bold text-blue-600">
-                86
+                {latestAnalysis.overallScore}
               </p>
 
               <p className="mt-1 text-xs text-slate-400">
@@ -67,7 +92,7 @@ const CareerInsights = () => {
               </p>
 
               <p className="mt-3 text-3xl font-bold text-slate-900">
-                8
+                {trend.length}
               </p>
 
               <p className="mt-1 text-xs text-slate-400">
@@ -86,12 +111,11 @@ const CareerInsights = () => {
             </p>
 
             <h3 className="mt-3 text-xl font-semibold text-slate-900">
-              Leadership & Product Strategy
+              {result.strengths[0] ?? "No strength identified"}
             </h3>
 
             <p className="mt-2 text-sm leading-6 text-slate-500">
-              Your resume consistently demonstrates strong ownership,
-              leadership, and product decision-making.
+              {result.summary}
             </p>
           </div>
 
@@ -102,17 +126,16 @@ const CareerInsights = () => {
             </p>
 
             <h3 className="mt-3 text-xl font-semibold text-slate-900">
-              Quantified Impact
+              {result.weaknesses[0] ?? "No gap identified"}
             </h3>
 
             <p className="mt-2 text-sm leading-6 text-slate-500">
-              Your experience describes responsibilities well, but several
-              bullets lack measurable outcomes and business impact.
+              {result.priorityImprovements[0] ?? result.skills.feedback}
             </p>
           </div>
 
         </div>
-        <PerformanceTrend />
+        <PerformanceTrend scoreHistory={trend} />
       </div>
     </section>
   );
