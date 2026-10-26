@@ -9,8 +9,8 @@ export const auth = betterAuth({
   trustedOrigins: [
     "http://localhost:3000",
     "https://ai-resume-reviewer-git-v1-shivam-dhmns-projects.vercel.app",
-    "https://ai-resume-reviewer-nine-drab.vercel.app/",
-    "https://ai-resume-reviewer-shivam-dhmns-projects.vercel.app/"
+    "https://ai-resume-reviewer-nine-drab.vercel.app",
+    "https://ai-resume-reviewer-shivam-dhmns-projects.vercel.app",
   ],
 
   database: prismaAdapter(prisma, {
