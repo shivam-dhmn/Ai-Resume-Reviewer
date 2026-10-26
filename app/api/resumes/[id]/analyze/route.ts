@@ -163,6 +163,32 @@ Never output reasoning outside the JSON.
 Never use Markdown or code fences.
 The response must begin with { and end with }.
 
+OUTPUT FORMAT REQUIREMENTS:
+
+Return exactly one JSON object. Do not use Markdown or code fences.
+
+Always include every field listed below:
+- targetRole: string
+- overallScore: integer from 0 to 100
+- atsScore: integer from 0 to 100
+- summary: string
+- strengths: array of strings
+- weaknesses: array of strings
+- experience: object containing score and feedback
+- skills: object containing score and feedback
+- grammar: object containing score and feedback
+- keywords: object containing found and missing arrays
+- priorityImprovements: array of strings
+
+IMPORTANT:
+- overallScore and atsScore must be top-level fields.
+- experience, skills, and grammar must be top-level objects.
+- Do not create a "scores" wrapper object.
+- Do not rename "priorityImprovements" to "improvements".
+- Never omit a required field.
+- Do not invent facts or achievements.
+- If evidence is limited, explain that in the feedback.
+
 `;
 
 const RESPONSE_SCHEMA = {
@@ -325,19 +351,28 @@ export async function POST(
     }
 
     // 5. Send extracted text to OpenRouter
+   
+    // 5. Send extracted text to OpenRouter
+    const openRouterKey = process.env.OPENROUTER_API_KEY;
+
+    if (!openRouterKey) {
+      return Response.json(
+        { error: "AI provider is not configured." },
+        { status: 500 }
+      );
+    }
+
     const aiResponse = await fetch(
-      "https://router.huggingface.co/v1/chat/completions",
+      "https://openrouter.ai/api/v1/chat/completions",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.HF_TOKEN}`,
+          Authorization: `Bearer ${openRouterKey}`,
         },
         body: JSON.stringify({
-          model: "Qwen/Qwen3-32B",
-
-          max_tokens: 4000,
-
+          model: "nvidia/nemotron-3-ultra-550b-a55b:free",
+          max_tokens: 8000,
           messages: [
             {
               role: "system",
@@ -346,7 +381,7 @@ export async function POST(
             {
               role: "user",
               content: `
-Analyze this resume:
+Analyze this resume and return only the JSON object matching the schema described in the system prompt.
 
 --- RESUME START ---
 ${resume.extractedText}
@@ -354,17 +389,8 @@ ${resume.extractedText}
 `,
             },
           ],
-
-          response_format: {
-            type: "json_schema",
-            json_schema: {
-              name: "resume_analysis",
-              strict: true,
-              schema: RESPONSE_SCHEMA,
-            },
-          },
         }),
-      },
+      }
     );
 
     const aiData = await aiResponse.json();
@@ -384,58 +410,143 @@ ${resume.extractedText}
       );
     }
 
+    
     // 7. Get AI-generated content
     const content = aiData.choices?.[0]?.message?.content;
 
-    if (!content) {
+    if (typeof content !== "string" || !content.trim()) {
       console.error("Missing AI content:", aiData);
 
       return Response.json(
-        {
-          error: "AI returned an empty response.",
-        },
-        { status: 502 },
+        { error: "AI returned an empty response." },
+        { status: 502 }
       );
     }
 
-    // 8. Parse the JSON
-    let analysis;
+    // 8. Parse and validate the JSON
+    let analysis: any;
 
-   try {
-  analysis = JSON.parse(content);
-} catch (error) {
-  console.error("Invalid AI JSON:", content, error);
+    try {
+      // Remove optional Markdown fences if the model includes them.
+      const cleanedContent = content
+        .trim()
+        .replace(/^```(?:json)?\s*/i, "")
+        .replace(/\s*```$/, "");
 
-  return Response.json(
-    {
-      error: "AI returned invalid JSON.",
-      rawResponse: content,
-    },
-    { status: 502 },
-  );
+      analysis = JSON.parse(cleanedContent);
+
+
+if (
+  typeof analysis === "object" &&
+  analysis !== null &&
+  !Array.isArray(analysis)
+) {
+  // Support scores nested under "scores".
+  if (
+    analysis.scores &&
+    typeof analysis.scores === "object"
+  ) {
+    const scores = analysis.scores;
+
+    for (const key of [
+      "overallScore",
+      "atsScore",
+      "experience",
+      "skills",
+      "grammar",
+    ]) {
+      if (analysis[key] === undefined && scores[key] !== undefined) {
+        analysis[key] = scores[key];
+      }
+    }
+  }
+
+  // Support alternate field names.
+  if (
+    !Array.isArray(analysis.priorityImprovements) &&
+    Array.isArray(analysis.improvements)
+  ) {
+    analysis.priorityImprovements = analysis.improvements;
+  }
+
+  // Add missing feedback without inventing assessments.
+  for (const section of ["experience", "skills", "grammar"] as const) {
+    if (
+      analysis[section] &&
+      typeof analysis[section] === "object" &&
+      typeof analysis[section].feedback !== "string"
+    ) {
+      analysis[section].feedback = "";
+    }
+  }
 }
 
-    if (
-      typeof analysis.targetRole !== "string" ||
-      typeof analysis.overallScore !== "number" ||
-      typeof analysis.atsScore !== "number" ||
-      typeof analysis.summary !== "string" ||
-      !Array.isArray(analysis.strengths) ||
-      !Array.isArray(analysis.weaknesses) ||
-      !analysis.experience ||
-      !analysis.skills ||
-      !analysis.keywords ||
-      !analysis.grammar ||
-      !Array.isArray(analysis.priorityImprovements)
-    ) {
-      console.error("Invalid AI analysis structure:", analysis);
+
+    } catch (error) {
+      console.error("Invalid AI JSON:", error);
 
       return Response.json(
-        {
-          error: "AI returned an invalid analysis structure.",
-        },
-        { status: 502 },
+        { error: "AI returned invalid JSON." },
+        { status: 502 }
       );
+    }
+
+    const isObject = (value: unknown): value is Record<string, any> =>
+      typeof value === "object" &&
+      value !== null &&
+      !Array.isArray(value);
+
+    if (!isObject(analysis)) {
+      return Response.json(
+        { error: "AI returned an invalid analysis object." },
+        { status: 502 }
+      );
+    }
+
+    const validScore = (value: unknown) =>
+      typeof value === "number" &&
+      Number.isInteger(value) &&
+      value >= 0 &&
+      value <= 100;
+
+    const valid =
+      typeof analysis.targetRole === "string" &&
+      validScore(analysis.overallScore) &&
+      validScore(analysis.atsScore) &&
+      typeof analysis.summary === "string" &&
+      Array.isArray(analysis.strengths) &&
+      analysis.strengths.every((item: unknown) => typeof item === "string") &&
+      Array.isArray(analysis.weaknesses) &&
+      analysis.weaknesses.every((item: unknown) => typeof item === "string") &&
+      ["experience", "skills", "grammar"].every(
+        (section) =>
+          isObject(analysis[section]) &&
+          validScore(analysis[section].score) &&
+          typeof analysis[section].feedback === "string"
+      ) &&
+      isObject(analysis.keywords) &&
+      Array.isArray(analysis.keywords.found) &&
+      analysis.keywords.found.every((item: unknown) => typeof item === "string") &&
+      Array.isArray(analysis.keywords.missing) &&
+      analysis.keywords.missing.every((item: unknown) => typeof item === "string") &&
+      Array.isArray(analysis.priorityImprovements) &&
+      analysis.priorityImprovements.every((item: unknown) => typeof item === "string");
+
+    if (!valid) {
+      console.error(
+        "Invalid AI analysis structure:",
+        JSON.stringify(analysis, null, 2)
+      );
+
+     
+return Response.json(
+  {
+    error: "AI returned an invalid analysis structure.",
+    received: analysis,
+  },
+  { status: 502 }
+);
+
     }
 
     // 9. Save analysis in Neon
@@ -458,14 +569,19 @@ ${resume.extractedText}
         result: savedAnalysis.result,
       },
     });
+ 
   } catch (error) {
     console.error("Resume analysis error:", error);
 
     return Response.json(
       {
         error: "Something went wrong while analyzing the resume.",
+        details:
+          error instanceof Error
+            ? error.message
+            : String(error),
       },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
