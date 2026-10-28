@@ -11,6 +11,7 @@ export const auth = betterAuth({
     "https://ai-resume-reviewer-git-v1-shivam-dhmns-projects.vercel.app",
     "https://ai-resume-reviewer-nine-drab.vercel.app",
     "https://ai-resume-reviewer-shivam-dhmns-projects.vercel.app",
+    "https://get-resume-ready.vercel.app",
   ],
 
   database: prismaAdapter(prisma, {
